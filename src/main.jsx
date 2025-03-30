@@ -1,10 +1,15 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import Navheader from "./components/Header.jsx"
-import Homepage from "./pages/homepage.jsx"
+import App from "./app.jsx"
+import "./index.css"
+import { Provider } from 'react-redux'
+import store from './redux/store'  
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <Navheader/>
-    <Homepage/>
+ <Provider store={store}>  
+      <App /> 
+    </Provider>
+   
   </StrictMode>,
 )
