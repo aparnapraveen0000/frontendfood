@@ -1,73 +1,78 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
 import { axiosInstance } from "../../config/axiosInstance";
+import Cookies from 'js-cookie';
+import { Trash2 } from 'lucide-react'; // Dustbin icon
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const [totalPrice, setTotalPrice] = useState(0);
 
   useEffect(() => {
-    const fetchCartItems = async () => {
-      try {
-        const token = localStorage.getItem("token"); // Retrieve token from localStorage
-        if (!token) {
-          throw new Error("User not authenticated");
-        }
-
-        const response = await axiosInstance.get("/cart/get", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        setCartItems(response.data.cartItems);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchCartItems();
-  }, []); // ✅ Only one useEffect, correctly placed
+  }, []);
 
-  const handleRemoveItem = async (itemId) => {
+  const fetchCartItems = async () => {
     try {
-      await axiosInstance.delete(`/cart/remove/${itemId}`);
-      setCartItems(cartItems.filter((item) => item._id !== itemId));
+      const token = Cookies.get("token");
+      const response = await axiosInstance.get("/cart/get", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setCartItems(response.data.items || []);
+      setTotalPrice(response.data.totalPrice || 0);
     } catch (error) {
-      console.error("Error removing item:", error);
+      console.error("Error fetching cart:", error.response?.data || error.message);
     }
   };
 
-  const handleCheckout = () => {
-    navigate("/payment"); // Redirect to payment page
+  const handleDelete = async (foodId) => {
+    try {
+      const token = Cookies.get("token");
+      await axiosInstance.put("/cart/remove", { foodId }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchCartItems();
+    } catch (error) {
+      console.error("Error deleting item:", error.response?.data || error.message);
+    }
   };
 
-  if (loading) return <p>Loading cart...</p>;
-  if (error) return <p>Error: {error}</p>;
-  if (cartItems.length === 0) return <p>Your cart is empty.</p>;
-
   return (
-    <div className="container mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">Your Cart</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {cartItems.map((item) => (
-          <div key={item._id} className="card bg-white shadow-lg p-4 rounded-lg">
-            <img src={item.image} alt={item.name} className="w-full h-40 object-cover rounded" />
-            <h3 className="text-lg font-bold mt-2">{item.name}</h3>
-            <p className="text-gray-600">${item.price} x {item.quantity}</p>
-            <button className="btn btn-error mt-2" onClick={() => handleRemoveItem(item._id)}>
-              Remove
-            </button>
+    <div className="max-w-xl mx-auto p-4">
+      <h2 className="text-2xl font-bold mb-4 text-center">🛒 Your Cart</h2>
+
+      {cartItems.length > 0 ? (
+        <div className="space-y-4">
+          {cartItems.map((item) => (
+            <div
+              key={item.foodId._id}
+              className="card bg-base-100 shadow-md border border-base-300"
+            >
+              <div className="card-body flex-row justify-between items-center">
+                <div>
+                  <h3 className="font-semibold text-lg">{item.foodId.name}</h3>
+                  <p className="text-sm text-gray-600">
+                    ₹{item.price} x {item.quantity} = <span className="font-medium text-black">₹{item.price * item.quantity}</span>
+                  </p>
+                </div>
+                <button
+                  className="btn btn-sm btn-error btn-outline"
+                  onClick={() => handleDelete(item.foodId._id)}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          ))}
+
+          <div className="text-right mt-4">
+            <p className="text-lg font-semibold">Total: ₹{totalPrice}</p>
           </div>
-        ))}
-      </div>
-      <button className="btn btn-success mt-4" onClick={handleCheckout}>
-        Proceed to Checkout
-      </button>
+        </div>
+      ) : (
+        <div className="text-center mt-10">
+          <p className="text-lg text-gray-500">🧺 Your cart is empty</p>
+        </div>
+      )}
     </div>
   );
 };

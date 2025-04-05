@@ -2,7 +2,7 @@ import React, { useState,useEffect } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 
 function ProtectRoutes() {
-  const [isUserAuth,setIsUserAuth]=useState(false)
+  const [isUserAuth,setIsUserAuth]=useState(true)
 
   let navigate=useNavigate()
   useEffect(()=>{

@@ -1,25 +1,24 @@
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form'; // Add this import
 import { axiosInstance } from "../../config/axiosInstance.js";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";  
+import { useDispatch } from "react-redux";
 import { saveUser, clearUser } from "../../redux/userSlice";
+import Cookies from "js-cookie";
 
 export const Login = ({ role }) => {
-    const { register, handleSubmit } = useForm();
+    const { register, handleSubmit } = useForm(); // Now this will work
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const userConfig = {
         user: {
             loginAPI: "/user/login",
-            profileRoute: "/user/profile",
             signupRoute: "/signup",
         },
         mentor: {
             loginAPI: "/mentor/login",
-            profileRoute: "/mentor/profile",
             signupRoute: "/mentor/signup",
         }
     };
@@ -38,10 +37,17 @@ export const Login = ({ role }) => {
                 password: data.password
             });
 
-            console.log("API Response:", response);
-            dispatch(saveUser(response?.data?.data));
-            toast.success("Login successful!");
-            navigate(currentRole.profileRoute);
+            console.log("Login Response:", response.data); // Debug the response
+
+            if (response?.data) {
+                const { message, token, ...userData } = response.data;
+                Cookies.set("token", token, { expires: 7 });
+                dispatch(saveUser({ user: userData.data, token }));
+                toast.success(message || "Login successful!");
+                navigate("/");
+            } else {
+                throw new Error("Invalid response from server");
+            }
         } catch (error) {
             dispatch(clearUser());
             console.error("Login error:", error.response?.data || error.message);
@@ -90,7 +96,7 @@ export const Login = ({ role }) => {
                             </label>
                         </div>
                         <div className="form-control mt-6">
-                            <button className="btn btn-primary">Login</button>
+                            <button type="submit" className="btn btn-primary">Login</button>
                         </div>
                     </form>
                 </div>

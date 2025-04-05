@@ -4,7 +4,7 @@ import {Login} from "../pages/shared/loginPage.jsx";
 import Home from "../pages/user/home.jsx";
 import Profile from "../pages/user/profile.jsx";
 import Cart from "../pages/user/cart.jsx";
-import Payment from "../pages/user/payment.jsx"
+// import Payment from "../pages/user/payment.jsx"
 import Rootlayout from "../layout/RootLayout.jsx";
 import ProtectRoutes from "./ProtectRoutes.jsx"
 import { ErrorPage } from "../pages/shared/errorpage.jsx";
@@ -20,50 +20,48 @@ import SignUpPage from "../pages/user/signupPage.jsx";
  element:<Rootlayout/>,
  errorElement:<ErrorPage/>,
  children:[
-  {
+    {
     path: "/signup",
-    element: <div><SignUpPage/></div>,
-  },
+    element: <SignUpPage/>
+    },
+    {
+    path: "/login",
+    element: <Login/>
+    },
     {
       path: "/",
-      element: <div><Home/></div>,
+      element: <Home/>
     },
     {
       path: "/about",
-      element: <div><About/></div>,
+      element: <About/>
     },
-    {
-      path: "/login",
-      element: <div><Login/></div>,
-    },
-    
     {
       path: "/menu",
-      element: <div><Menu/></div>,
+      element: <Menu/>
     },
     {
-      path: "/restaurants/:itemId",
-      element: <div>< RestaurantsList/></div>,
+      path: "/restaurants/:restaurantId",
+      element: < RestaurantsList/>
     },
-   
-
-
+    
     {
       element:<ProtectRoutes/>,
       children:[
     
       {
         path: "/profile",
-        element: <div>< Profile/></div>,
+        element: <Profile/>
       },
-      {
-        path: "/payment",
-        element: <div><Payment/></div>,
-      },
+      // {
+      //   path: "/payment",
+      //   element: <Payment/>
+      // },
       {
         path: "/cart",
-        element: <div><Cart/></div>,
+        element:<Cart/>
       },
+     
      
       
 
