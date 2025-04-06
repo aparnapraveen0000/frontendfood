@@ -1,6 +1,5 @@
-// pages/user/profile.jsx
 import React, { useState, useEffect } from 'react';
-import { axiosInstance } from '../../config/axiosInstance.js'; // Adjusted path based on your structure
+import { axiosInstance } from '../../config/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
@@ -11,7 +10,6 @@ const Profile = () => {
   const [formData, setFormData] = useState({});
   const navigate = useNavigate();
 
-  // Fetch user profile on component mount
   useEffect(() => {
     fetchProfile();
   }, []);
@@ -20,13 +18,7 @@ const Profile = () => {
     try {
       const response = await axiosInstance.get('/user/getProfile');
       setUserData(response.data.data);
-      setFormData({
-        name: response.data.data.name,
-        email: response.data.data.email,
-        mobile: response.data.data.mobile,
-        address: response.data.data.address,
-        profilePic: response.data.data.profilePic
-      });
+      setFormData(response.data.data);
       setLoading(false);
     } catch (err) {
       setError(err.response?.data?.message || 'Error fetching profile');
@@ -37,7 +29,7 @@ const Profile = () => {
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -62,107 +54,87 @@ const Profile = () => {
     }
   };
 
-  const handleDeactivate = async () => {
-    if (window.confirm('Are you sure you want to deactivate your account?')) {
-      try {
-        await axiosInstance.put('/user/deactivate');
-        navigate('/login');
-      } catch (err) {
-        setError(err.response?.data?.message || 'Error deactivating account');
-      }
-    }
-  };
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (loading) return <div className="text-center mt-10">Loading...</div>;
+  if (error) return <div className="text-center mt-10 text-red-500">Error: {error}</div>;
 
   return (
-    <div className="profile-container">
-      <h1>User Profile</h1>
-      
-      {!isEditing ? (
-        <div className="profile-display">
-          <img 
-            src={userData.profilePic} 
-            alt="Profile" 
-            className="profile-pic"
-            onError={(e) => {
-              e.target.src = 'https://cdn.vectorstock.com/i/1000v/26/40/profile-placeholder-image-gray-silhouette-vector-22122640.jpg';
-            }}
-          />
-          <div className="profile-info">
+    <div className="max-w-xl mx-auto mt-10 p-4">
+      <div className="card bg-base-100 shadow-md p-6">
+        <h2 className="text-xl font-bold mb-4 text-center">User Profile</h2>
+
+        {!isEditing ? (
+          <div className="space-y-4 text-center">
+            <img
+              src={
+                userData.profilePic
+                  ? userData.profilePic
+                  : 'https://cdn.vectorstock.com/i/1000v/26/40/profile-placeholder-image-gray-silhouette-vector-22122640.jpg'
+              }
+              alt="Profile"
+              className="w-24 h-24 rounded-full mx-auto"
+            />
             <p><strong>Name:</strong> {userData.name}</p>
             <p><strong>Email:</strong> {userData.email}</p>
             <p><strong>Mobile:</strong> {userData.mobile}</p>
             <p><strong>Address:</strong> {userData.address}</p>
+            <div className="flex flex-col gap-2 mt-4">
+              <button className="btn bg-orange-400 hover:bg-yellow-500 text-black" onClick={() => setIsEditing(true)}>Edit</button>
+              <button className="btn bg-orange-500 hover:bg-yellow-600 text-black" onClick={handleLogout}>Logout</button>
+            </div>
           </div>
-          <button onClick={() => setIsEditing(true)}>Edit Profile</button>
-          <button onClick={handleLogout}>Logout</button>
-          <button onClick={handleDeactivate} className="deactivate-btn">
-            Deactivate Account
-          </button>
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="profile-form">
-          <div className="form-group">
-            <label>Name:</label>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
             <input
               type="text"
               name="name"
-              value={formData.name}
+              className="input input-bordered input-sm md"
+              value={formData.name || ''}
               onChange={handleInputChange}
-              maxLength="30"
+              placeholder="Name"
               required
             />
-          </div>
-          <div className="form-group">
-            <label>Email:</label>
             <input
               type="email"
               name="email"
-              value={formData.email}
+              className="input input-bordered input-sm md"
+              value={formData.email || ''}
               onChange={handleInputChange}
-              maxLength="30"
+              placeholder="Email"
               required
             />
-          </div>
-          <div className="form-group">
-            <label>Mobile:</label>
             <input
               type="text"
               name="mobile"
-              value={formData.mobile}
+              className="input input-bordered input-sm md"
+              value={formData.mobile || ''}
               onChange={handleInputChange}
+              placeholder="Mobile"
               required
             />
-          </div>
-          <div className="form-group">
-            <label>Address:</label>
             <input
               type="text"
               name="address"
-              value={formData.address}
+              className="input input-bordered input-sm md"
+              value={formData.address || ''}
               onChange={handleInputChange}
+              placeholder="Address"
               required
             />
-          </div>
-          <div className="form-group">
-            <label>Profile Picture URL:</label>
             <input
               type="text"
               name="profilePic"
-              value={formData.profilePic}
+              className="input input-bordered input-sm md"
+              value={formData.profilePic || ''}
               onChange={handleInputChange}
+              placeholder="Profile Picture URL"
             />
-          </div>
-          <div className="form-actions">
-            <button type="submit">Save Changes</button>
-            <button type="button" onClick={() => setIsEditing(false)}>
-              Cancel
-            </button>
-          </div>
-        </form>
-      )}
+            <div className="flex gap-2 pt-2">
+              <button type="submit" className="btn btn-primary">Save</button>
+              <button type="button" className="btn btn-outline" onClick={() => setIsEditing(false)}>Cancel</button>
+            </div>
+          </form>
+        )}
+      </div>
     </div>
   );
 };

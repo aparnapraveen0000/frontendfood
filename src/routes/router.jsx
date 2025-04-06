@@ -11,6 +11,7 @@ import { ErrorPage } from "../pages/shared/errorpage.jsx";
 import { Menu } from "../pages/user/menu.jsx";
 import RestaurantsList from "../pages/user/RestaurantsList.jsx"
 import SignUpPage from "../pages/user/signupPage.jsx";
+import Order from "../pages/user/order.jsx";
 
  export const router = createBrowserRouter([
 
@@ -61,7 +62,10 @@ import SignUpPage from "../pages/user/signupPage.jsx";
         path: "/cart",
         element:<Cart/>
       },
-     
+      {
+        path: "/order",
+        element:<Order/>
+      },
      
       
 

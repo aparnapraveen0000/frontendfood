@@ -13,11 +13,13 @@ const Product = ({ product }) => {
         navigate("/login"); // Redirect to login if not authenticated
         return;
       }
+
       console.log("Sending request to add item to cart...");
       await axiosInstance.post(
         "/cart/add",
         {
           foodId: product._id,
+          price: product.price,    
           quantity: 1,
         },
         {
@@ -27,12 +29,10 @@ const Product = ({ product }) => {
         }
       );
 
-      // Navigate to cart page after successful addition
       console.log("Item added successfully, navigating to /cart");
       navigate("/cart");
     } catch (error) {
       console.error("Error adding to cart:", error);
-      // Optionally show user feedback (e.g., toast notification)
       alert("Failed to add item to cart. Please try again.");
     }
   };

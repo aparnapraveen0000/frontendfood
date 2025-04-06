@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { axiosInstance } from "../../config/axiosInstance";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
 const RestaurantsList = () => {
   const { restaurantId } = useParams();
   const { state } = useLocation(); // Get the selected item from navigation state
-  const navigate = useNavigate(); // For navigation
+  const navigate = useNavigate();
   const [restaurant, setRestaurant] = useState({});
   const [menu, setMenu] = useState([]);
-  const [cart, setCart] = useState([]); // Local cart state (optional)
+  const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [quantity, setQuantity] = useState(1); // Quantity for the selected item
+  const [quantity, setQuantity] = useState(1);
 
-  const selectedItem = state?.selectedItem; // The selected food item from Card
+  const selectedItem = state?.selectedItem;
 
   useEffect(() => {
     const fetchRestaurant = async () => {
@@ -50,22 +50,30 @@ const RestaurantsList = () => {
         navigate("/login");
         return;
       }
-      console.log("Selected Item:", selectedItem);
-      console.log("Sending to API:", { foodId: selectedItem._id, quantity });
-      
+
+      // ✅ Make sure to send all required fields: foodId, name, price, quantity
       const response = await axiosInstance.post(
         "/cart/add",
-        { foodId: selectedItem._id, quantity },
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          foodId: selectedItem._id,
+          quantity,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
+
       console.log("Add to Cart Response:", response.data);
 
-      // Optional: Update local cart state (remove if relying on backend)
       setCart((prevCart) => {
         const existingItem = prevCart.find((item) => item._id === selectedItem._id);
         if (existingItem) {
           return prevCart.map((item) =>
-            item._id === selectedItem._id ? { ...item, quantity: item.quantity + quantity } : item
+            item._id === selectedItem._id
+              ? { ...item, quantity: item.quantity + quantity }
+              : item
           );
         } else {
           const cartItem = { ...selectedItem, quantity };
@@ -73,13 +81,13 @@ const RestaurantsList = () => {
         }
       });
 
-      navigate("/cart"); // Navigate to cart page after successful addition
+      navigate("/cart");
     } catch (error) {
       console.error("Error adding to cart:", error.response?.data || error.message);
       alert("Failed to add item to cart. Please try again.");
     }
 
-    setQuantity(1); // Reset quantity after adding to cart
+    setQuantity(1); // Reset quantity
   };
 
   if (loading) return <p className="text-center text-lg font-semibold">Loading...</p>;
@@ -89,15 +97,23 @@ const RestaurantsList = () => {
     <div className="max-w-4xl mx-auto p-4">
       {/* Restaurant Details */}
       <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
-        <h3 className="text-2xl font-bold text-gray-800">{restaurant?.name || "Not Available"}</h3>
-        <p className="text-gray-600">Rating: {restaurant?.rating || "Not Available"}</p>
-        <p className="text-gray-600">Location: {restaurant?.location?.address || "Not Available"}</p>
+        <h3 className="text-2xl font-bold text-gray-800">
+          {restaurant?.name || "Not Available"}
+        </h3>
+        <p className="text-gray-600">
+          Rating: {restaurant?.rating || "Not Available"}
+        </p>
+        <p className="text-gray-600">
+          Location: {restaurant?.location?.address || "Not Available"}
+        </p>
       </div>
 
       {/* Selected Food Item Details */}
       {selectedItem ? (
         <div className="bg-white shadow-md rounded-lg p-6">
-          <h4 className="text-xl font-semibold text-gray-800 mb-4">{selectedItem.name}</h4>
+          <h4 className="text-xl font-semibold text-gray-800 mb-4">
+            {selectedItem.name}
+          </h4>
           <p className="text-lg text-green-600">₹{selectedItem.price}</p>
           <p className="text-orange-700 mt-2">
             {selectedItem.description || "No description available"}
@@ -108,7 +124,9 @@ const RestaurantsList = () => {
               type="number"
               min="1"
               value={quantity}
-              onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value)))}
+              onChange={(e) =>
+                setQuantity(Math.max(1, parseInt(e.target.value)))
+              }
               className="w-20 p-2 border rounded text-gray-800 border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>

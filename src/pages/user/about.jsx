@@ -37,11 +37,11 @@ function About() {
           className="px-6 py-3 bg-yellow-400 text-black font-semibold rounded-lg shadow-md transition-transform transform hover:scale-105 hover:bg-yellow-500"
           onClick={() => navigate("/")}
         >
-          Go to Home 🏠
+          Go to Home  
         </button>
       </div>
     </div>
   );
 }
 
-export default About;
+export default About; 

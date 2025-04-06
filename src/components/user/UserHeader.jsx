@@ -8,7 +8,7 @@ export const UserHeader = () => {
     <div className="flex justify-between items-center p-6 h-24 shadow-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
       {/* Logo */}
       <img
-        className="w-40 h-40 rounded-full object-cover"
+        className="w-25 h-20  object-cover"
         src="https://i.pinimg.com/474x/46/c2/bc/46c2bcfe971bd6ef6bb5e989ec2c7e12.jpg"
         alt="logo"
       />
@@ -29,8 +29,8 @@ export const UserHeader = () => {
         <Link to={"/login"} className="hover:text-orange-500 transition duration-300">
           Login
         </Link>
-        <Link to={"/wish"} className="hover:text-orange-500 transition duration-300">
-          Wish
+        <Link to={"/order"} className="hover:text-orange-500 transition duration-300">
+          My Orders
         </Link>
       </nav>
 
@@ -40,7 +40,7 @@ export const UserHeader = () => {
         <Link to={"/cart"} className="hover:text-orange-500 transition duration-300">
           <ShoppingCart className="cursor-pointer w-6 h-6" />
         </Link>
-        <Link to={"/"} className="hover:text-orange-500 transition duration-300">
+        <Link to={"/profile"} className="hover:text-orange-500 transition duration-300">
           <CircleUserRound className="w-6 h-6" />
         </Link>
       </div>
