@@ -7,6 +7,7 @@ import Cart from "../pages/user/cart.jsx";
 // import Payment from "../pages/user/payment.jsx"
 import Rootlayout from "../layout/RootLayout.jsx";
 import ProtectRoutes from "./ProtectRoutes.jsx"
+import ProtectAdminRoutes from "./protectAdminRoutes.jsx";
 import { ErrorPage } from "../pages/shared/errorpage.jsx";
 import { Menu } from "../pages/user/menu.jsx";
 import RestaurantsList from "../pages/user/RestaurantsList.jsx"
@@ -67,9 +68,26 @@ import Order from "../pages/user/order.jsx";
         element:<Order/>
       },
      
-      
-
      ]
+    },
+    {
+      element: <ProtectAdminRoutes/>,
+      children: [
+        // {
+        //   path:"admin/signup",
+        //   element: <AdminSignup/>
+        // },
+        // {
+        //   path:"admin/profile",
+        //   element: <Adminprofile/>
+        // },
+        // {
+        //   path:"admin/dashboard",
+        //   element: <AdminDashboard/>
+        // },
+        
+        
+      ]
     }
 
   ]
