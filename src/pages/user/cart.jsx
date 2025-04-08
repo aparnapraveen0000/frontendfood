@@ -90,7 +90,7 @@ const Cart = () => {
             <div className="flex justify-between items-center">
               <span className="text-lg font-bold text-yellow-500">Total: ₹{totalPrice}</span>
               <button className="btn btn-primary">
-                My order
+                checkout
               </button>
             </div>
           </div>

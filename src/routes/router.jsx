@@ -13,6 +13,11 @@ import { Menu } from "../pages/user/menu.jsx";
 import RestaurantsList from "../pages/user/RestaurantsList.jsx"
 import SignUpPage from "../pages/user/signupPage.jsx";
 import Order from "../pages/user/order.jsx";
+import AdminDashboard from "../pages/admin/admindashboard.jsx";
+import Adminprofile from "../pages/admin/adminprofile.jsx";
+import AdminSignup from "../pages/admin/adminsignup.jsx";
+import Adminlayout from "../layout/adminlayout.jsx";
+
 
  export const router = createBrowserRouter([
 
@@ -69,29 +74,46 @@ import Order from "../pages/user/order.jsx";
       },
      
      ]
-    },
-    {
-      element: <ProtectAdminRoutes/>,
-      children: [
-        // {
-        //   path:"admin/signup",
-        //   element: <AdminSignup/>
-        // },
-        // {
-        //   path:"admin/profile",
-        //   element: <Adminprofile/>
-        // },
-        // {
-        //   path:"admin/dashboard",
-        //   element: <AdminDashboard/>
-        // },
-        
-        
-      ]
     }
+    
 
   ]
   
+  },
+  {
+    path:"",
+    element:<Adminlayout/>,
+    errorElement:<ErrorPage/>,
+    children:[
+      {
+        path:"admin/signup",
+        element: <AdminSignup/>
+      },
+      {
+        path:"admin/login",
+        element: <Login role="admin" />
+      },
+      {
+        path:"admin/dashboard",
+       element: <AdminDashboard/>
+      },
+
+      {
+             element: <ProtectAdminRoutes/>,
+             children: [
+             
+              {
+                path:"admin/profile",
+                element: <Adminprofile/>
+              },
+              
+              
+              
+            ]
+        }
+
+    ]
+
   }
 
   ]);

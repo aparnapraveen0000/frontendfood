@@ -17,9 +17,9 @@ export const Login = ({ role }) => {
             loginAPI: "/user/login",
             signupRoute: "/signup",
         },
-        mentor: {
-            loginAPI: "/mentor/login",
-            signupRoute: "/mentor/signup",
+        admin: {
+            loginAPI: "/admin/login",
+            signupRoute: "/admin/signup",
         }
     };
 
@@ -44,7 +44,11 @@ export const Login = ({ role }) => {
                 Cookies.set("token", token, { expires: 7 });
                 dispatch(saveUser({ user: userData.data, token }));
                 toast.success(message || "Login successful!");
-                navigate("/");
+                if (role === "admin") {
+                    navigate("/admin/dashboard"); // your actual admin dashboard route
+                } else {
+                    navigate("/");
+                }
             } else {
                 throw new Error("Invalid response from server");
             }

@@ -1,11 +1,11 @@
-// import React from 'react'
+import React from 'react'
 
-// function AdminDashboard() {
-//   return (
-//     <div>
-      
-//     </div>
-//   )
-// }
+function AdminDashboard() {
+  return (
+    <div>
+      this is my page
+    </div>
+  )
+}
 
-// export default AdminDashboard
+export default AdminDashboard

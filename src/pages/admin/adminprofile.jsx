@@ -1,11 +1,11 @@
-// import React from 'react'
+import React from 'react'
 
-// function Adminprofile() {
-//   return (
-//     <div>
-//       admin profile page 
-//     </div>
-//   )
-// }
+function Adminprofile() {
+  return (
+    <div>
+      admin profile page 
+    </div>
+  )
+}
 
-// export default Adminprofile
+export default Adminprofile
