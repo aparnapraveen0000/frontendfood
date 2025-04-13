@@ -20,7 +20,11 @@ export const Login = ({ role }) => {
         admin: {
             loginAPI: "/admin/login",
             signupRoute: "/admin/signup",
-        }
+        },
+        seller: {
+            loginAPI: "/seller/login",
+            signupRoute: "/seller/signup",
+          }
     };
 
     const currentRole = userConfig[role] || userConfig.user;
@@ -46,9 +50,11 @@ export const Login = ({ role }) => {
                 toast.success(message || "Login successful!");
                 if (role === "admin") {
                     navigate("/admin/dashboard"); // your actual admin dashboard route
-                } else {
+                }else if (role === "seller") {
+                    navigate("/seller/dashboard"); // or any seller-specific page
+                  } else {
                     navigate("/");
-                }
+                  } 
             } else {
                 throw new Error("Invalid response from server");
             }

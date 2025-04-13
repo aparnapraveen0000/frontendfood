@@ -218,4 +218,20 @@ const OrdersPage = () => {
 };
 
 export default OrdersPage;
-
+// const fetchCoupon = async () => {
+//   try {
+//     const res = await axiosInstance.get(`/coupon/${id}`);
+//     const coupon = res.data.data;
+//     const formatDate = (date) => new Date(date).toISOString().split("T")[0];
+//     setFormData({
+//       ...coupon,
+//       validFrom: formatDate(coupon.validFrom),
+//       validTo: formatDate(coupon.validTo),
+//     });
+//   } catch (err) {
+//     setError("Failed to fetch coupon. Please try again later.");
+//     console.error("Error fetching coupon:", err);
+//   } finally {
+//     setLoading(false);
+//   }
+// };

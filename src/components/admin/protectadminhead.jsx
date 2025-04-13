@@ -24,11 +24,20 @@ export const ProtectAdminHead = () => {
         <Link to={"admin/dashboard"} className="hover:text-orange-500 transition duration-300">
           Dashboard
         </Link>
+        <Link to={"admin/couponmanagement"} className="hover:text-orange-500 transition duration-300">
+          coupon
+        </Link>
+        <Link to={"admin/itemmanagement"} className="hover:text-orange-500 transition duration-300">
+          items
+        </Link>
+        <Link to={"admin/ordermanagement"} className="hover:text-orange-500 transition duration-300">
+          order
+        </Link>
         <Link to={"admin/restaurant"} className="hover:text-orange-500 transition duration-300">
           Restaurants
         </Link>
         <Link to={"admin/usermanagement"} className="hover:text-orange-500 transition duration-300">
-          user management
+          user
         </Link>
         <Link to={"admin/login"} className="hover:text-orange-500 transition duration-300">
           login

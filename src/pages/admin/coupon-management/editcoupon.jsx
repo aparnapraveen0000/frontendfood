@@ -1,48 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import { axiosInstance } from "../../../config/axiosInstance.js";
 
-const EditCoupon = () => {
-  const { id } = useParams(); // Get couponId from route
-  const navigate = useNavigate();
+const EditCoupon = ({ coupon, onBack }) => {
   const [formData, setFormData] = useState({
-    code: "",
-    discountValue: "",
-    minOrderAmount: "",
-    validFrom: "",
-    validTo: "",
-    couponIsActive: false,
+    code: coupon?.code || "",
+    discountValue: coupon?.discountValue || "",
+    minOrderAmount: coupon?.minOrderAmount || "",
+    validFrom: coupon?.validFrom?.split("T")[0] || "",
+    validTo: coupon?.validTo?.split("T")[0] || "",
+    couponIsActive: coupon?.couponIsActive || false,
   });
-  const [loading, setLoading] = useState(true); // Add loading state
-  const [error, setError] = useState(null); // Add error state
-
-  // Check if ID is available before making the API call
-  useEffect(() => {
-    if (!id) {
-      setError("Coupon ID is missing.");
-      setLoading(false);
-      return;
-    }
-
-    const fetchCoupons = async () => {
-      try {
-        const res = await axiosInstance.get("/coupon/admin/get_all");
-        const coupon = res.data.data.find((coupon) => coupon._id === id);
-        if (coupon) {
-          setFormData(coupon);
-        } else {
-          setError("Coupon not found.");
-        }
-      } catch (err) {
-        setError("Failed to fetch coupons. Please try again later.");
-        console.error("Error fetching coupons:", err);
-      } finally {
-        setLoading(false); // Stop loading after data is fetched
-      }
-    };
-
-    fetchCoupons();
-  }, [id]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -55,17 +22,14 @@ const EditCoupon = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axiosInstance.put(`/coupon/update/${id}`, formData);
+      await axiosInstance.put(`/coupon/update/${coupon._id}`, formData);
       alert("Coupon updated successfully!");
-      navigate("/admin/coupon"); // Redirect after update
+      onBack(); // Go back to menu after update
     } catch (err) {
       console.error("Error updating coupon:", err);
       alert("Failed to update coupon");
     }
   };
-
-  if (loading) return <div>Loading...</div>; // Show loading state while fetching data
-  if (error) return <div>{error}</div>; // Display error message
 
   return (
     <div className="p-4 max-w-lg mx-auto">
@@ -98,14 +62,14 @@ const EditCoupon = () => {
         <input
           type="date"
           name="validFrom"
-          value={formData.validFrom.split("T")[0]} // trim time if ISO string
+          value={formData.validFrom}
           onChange={handleChange}
           className="input input-bordered input-sm"
         />
         <input
           type="date"
           name="validTo"
-          value={formData.validTo.split("T")[0]}
+          value={formData.validTo}
           onChange={handleChange}
           className="input input-bordered input-sm"
         />
@@ -119,12 +83,14 @@ const EditCoupon = () => {
           />
           Active
         </label>
-        <button
-          type="submit"
-          className="btn btn-primary input-sm"
-        >
-          Update Coupon
-        </button>
+        <div className="flex justify-between gap-4">
+          <button type="submit" className="btn btn-primary input-sm">
+            Update Coupon
+          </button>
+          <button type="button" className="btn btn-secondary input-sm" onClick={onBack}>
+            Cancel
+          </button>
+        </div>
       </form>
     </div>
   );

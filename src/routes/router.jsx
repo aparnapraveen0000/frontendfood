@@ -27,7 +27,7 @@ import UserManagement from '../pages/admin/usermanage/usermanagement.jsx';
 import ItemManagement from "../pages/admin/itemmanagement/itemmanagement.jsx";
 import OrdersPage from "../pages/admin/ordermanagement/ordermanagement.jsx";
 import CouponManagement from "../pages/admin/coupon-management/couponmanage.jsx";
-
+import ResManageSeller from "../pages/seller/restaurantmanageseller/resmanageseller.jsx";
 
 
  export const router = createBrowserRouter([
@@ -136,8 +136,8 @@ import CouponManagement from "../pages/admin/coupon-management/couponmanage.jsx"
               {
                 path:"admin/couponmanagement",
                 element: <CouponManagement/>
-              }
-
+              },
+              
 
               
                ]
@@ -158,7 +158,7 @@ import CouponManagement from "../pages/admin/coupon-management/couponmanage.jsx"
       },
       {
         path:"seller/login",
-        element: <Login/>
+        element: <Login role="seller"/>
       },
       {
         path:"seller/dashboard",
@@ -172,6 +172,11 @@ import CouponManagement from "../pages/admin/coupon-management/couponmanage.jsx"
            path:"seller/profile",
            element: <SellerProfile/>
          },
+         {
+          path:"seller/resseller",
+          element:<ResManageSeller/>
+         }
+         
          
          
          
