@@ -1,57 +1,3 @@
-// import React, { useEffect, useState } from 'react';
-// import { axiosInstance } from "../../../config/axiosInstance";
-
-// const AllRestaurants = () => {
-//   const [restaurants, setRestaurants] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-
-//   useEffect(() => {
-//     const fetchRestaurants = async () => {
-//       try {
-//         const response = await axiosInstance.get("/restaurant", {
-//           withCredentials: true, // Ensures cookies (token) are sent with request
-//         });
-//         setRestaurants(response.data.data); // Expecting response: { data: [...], message: "..." }
-//         setLoading(false);
-//       } catch (err) {
-//         console.error("Error fetching restaurants:", err);
-//         setError("Failed to load restaurants. Please login again.");
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchRestaurants();
-//   }, []);
-
-//   if (loading) return <p>Loading restaurants...</p>;
-//   if (error) return <p className="text-red-600">{error}</p>;
-
-//   return (
-//     <div className="p-4">
-//       <h2 className="text-2xl font-bold mb-4">Restaurant List</h2>
-//       {restaurants.length === 0 ? (
-//         <p>No restaurants found.</p>
-//       ) : (
-//         <ul className="space-y-3">
-//           {restaurants.map((restaurant) => (
-//             <li
-//               key={restaurant._id}
-//               className="p-4 bg-base-200 rounded-lg shadow"
-//             >
-//               <p className="text-lg font-semibold">{restaurant.name}</p>
-//               <p className="text-sm text-gray-600">
-//                 {restaurant?.location?.city}, {restaurant?.location?.state}
-//               </p>
-//             </li>
-//           ))}
-//         </ul>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default AllRestaurants;
 import React, { useEffect, useState } from 'react';
 import {axiosInstance} from '../../../config/axiosInstance.js';
 import { toast } from 'react-toastify';
@@ -218,4 +164,3 @@ const OrdersPage = () => {
 };
 
 export default OrdersPage;
-

@@ -17,6 +17,17 @@ import AdminDashboard from "../pages/admin/admindashboard.jsx";
 import Adminprofile from "../pages/admin/adminprofile.jsx";
 import AdminSignup from "../pages/admin/adminsignup.jsx";
 import Adminlayout from "../layout/adminlayout.jsx";
+import SellerSignup from "../pages/seller/sellersignup.jsx";
+import SellerDashboard from "../pages/seller/sellerdashboard.jsx";
+import SellerProfile from "../pages/seller/sellerprofile.jsx";
+import Sellerlayout from "../layout/sellerlayout.jsx";
+import ProtectSellerRoutes from "./protectSellerRoutes.jsx";
+import RestaurantManagement from "../pages/admin/restaurant/restaurantmanagement.jsx";
+import UserManagement from '../pages/admin/usermanage/usermanagement.jsx';
+import ItemManagement from "../pages/admin/itemmanagement/itemmanagement.jsx";
+import OrdersPage from "../pages/admin/ordermanagement/ordermanagement.jsx";
+import CouponManagement from "../pages/admin/coupon-management/couponmanage.jsx";
+
 
 
  export const router = createBrowserRouter([
@@ -106,14 +117,67 @@ import Adminlayout from "../layout/adminlayout.jsx";
                 path:"admin/profile",
                 element: <Adminprofile/>
               },
+              {
+                path:"admin/restaurant",
+                element: <RestaurantManagement/>
+              },
+              {
+                path:"admin/usermanagement",
+                element: <UserManagement/>
+              },
+              {
+                path:"admin/itemmanagement",
+                element: <ItemManagement/>
+              },
+              {
+                path:"admin/ordermanagement",
+                element: <OrdersPage/>
+              },
+              {
+                path:"admin/couponmanagement",
+                element: <CouponManagement/>
+              }
+
+
               
-              
-              
-            ]
+               ]
         }
 
     ]
 
+  },
+  {
+    
+    path:"",
+    element:<Sellerlayout/>,
+    errorElement:<ErrorPage/>,
+    children:[
+      {
+        path:"seller/signup",
+        element: <SellerSignup/>
+      },
+      {
+        path:"seller/login",
+        element: <Login/>
+      },
+      {
+        path:"seller/dashboard",
+       element: <SellerDashboard/>
+      }, 
+      {
+        element: <ProtectSellerRoutes/>,
+        children: [
+        
+         {
+           path:"seller/profile",
+           element: <SellerProfile/>
+         },
+         
+         
+         
+       ]
+     }
+    ]
   }
 
   ]);

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { DarkMode } from "../shared/DarkMode";
 import { CircleUserRound } from "lucide-react";
 
-export const ProtectAdminHead = () => {
+export const ProtectSellerHead = () => {
   return (
     <div className="flex justify-between items-center p-6 h-24 shadow-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
       {/* Logo */}
@@ -20,17 +20,16 @@ export const ProtectAdminHead = () => {
 
       {/* Navigation */}
       <nav className="flex gap-8 text-lg font-medium">
-       
-        <Link to={"admin/dashboard"} className="hover:text-orange-500 transition duration-300">
+        <Link to={"/"} className="hover:text-orange-500 transition duration-300">
+          Home
+        </Link>
+        <Link to={"seller/dashboard"} className="hover:text-orange-500 transition duration-300">
           Dashboard
         </Link>
-        <Link to={"admin/restaurant"} className="hover:text-orange-500 transition duration-300">
-          Restaurants
+        <Link to={"seller/profile"} className="hover:text-orange-500 transition duration-300">
+          Adminprofile
         </Link>
-        <Link to={"admin/usermanagement"} className="hover:text-orange-500 transition duration-300">
-          user management
-        </Link>
-        <Link to={"admin/login"} className="hover:text-orange-500 transition duration-300">
+        <Link to={"seller/login"} className="hover:text-orange-500 transition duration-300">
           login
         </Link>
       </nav>
@@ -38,7 +37,7 @@ export const ProtectAdminHead = () => {
       {/* Icons & Dark Mode */}
       <div className="flex gap-6 items-center">
         <DarkMode />
-        <Link to={"admin/profile"} className="hover:text-orange-500 transition duration-300">
+        <Link to={"seller/profile"} className="hover:text-orange-500 transition duration-300">
           <CircleUserRound className="w-6 h-6" />
         </Link>
       </div>
