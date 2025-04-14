@@ -27,24 +27,22 @@ const CreateRestaurant = () => {
     }
 
     try {
-      const response = await axiosInstance.post(
-        '/restaurant/restaurant',
-        {
-          name: formData.name,
-          description: formData.description,
-          location: {
-            address: formData.address,
-            city: formData.city,
-            state: formData.state,
-            pincode: formData.pincode,
-          },
-          rating: ratingInt,
+      const response = await axiosInstance.post('/restaurant/addres', {
+        name: formData.name,
+        description: formData.description,
+        location: {
+          address: formData.address,
+          city: formData.city,
+          state: formData.state,
+          pincode: formData.pincode,
         },
-        { withCredentials: true }
-      );
+        rating: ratingInt,
+      });
 
       console.log('Restaurant created:', response.data);
       alert("Restaurant created successfully!");
+
+      // Clear the form after successful creation
       setFormData({
         name: '',
         description: '',

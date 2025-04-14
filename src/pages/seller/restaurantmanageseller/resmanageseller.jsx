@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import CreateRestaurant from './createres.jsx';
-import GetEditDeleteRes from './geteditdeleteres.jsx';
+import  GetEditDeleteRes from './geteditdeleteres.jsx';
 
 function ResManageSeller() {
   const [activeComponent, setActiveComponent] = useState(null);
@@ -38,7 +38,7 @@ function ResManageSeller() {
 
           {/* Render Selected Component */}
           {activeComponent === 'add' && <CreateRestaurant />}
-          {activeComponent === 'all' && <GetEditDeleteRes />}
+          {activeComponent === 'all' && < GetEditDeleteRes />}
         </div>
       )}
     </>

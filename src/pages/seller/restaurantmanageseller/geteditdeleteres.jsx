@@ -13,6 +13,7 @@ const GetEditDeleteRes = () => {
     city: "",
     state: "",
     pincode: "",
+    rating: "",
   });
 
   useEffect(() => {
@@ -21,13 +22,11 @@ const GetEditDeleteRes = () => {
 
   const fetchRestaurants = async () => {
     try {
-      const response = await axiosInstance.get("/restaurant", {
-        withCredentials: true,
-      });
+      const response = await axiosInstance.get("/restaurant/allres");
       setRestaurants(response.data.data);
       setLoading(false);
     } catch (err) {
-      console.error("Error fetching restaurants:", err);
+      console.error("Error fetching seller's restaurants:", err);
       setError("Failed to load restaurants. Please login again.");
       setLoading(false);
     }
@@ -35,9 +34,7 @@ const GetEditDeleteRes = () => {
 
   const handleDelete = async (restaurantId) => {
     try {
-      await axiosInstance.delete(`/restaurant/delete/${restaurantId}`, {
-        withCredentials: true,
-      });
+      await axiosInstance.delete(`/restaurant/removeres/${restaurantId}`);
       setRestaurants((prev) => prev.filter((r) => r._id !== restaurantId));
     } catch (error) {
       console.error("Delete error:", error.response?.data || error.message);
@@ -48,11 +45,12 @@ const GetEditDeleteRes = () => {
     setEditingId(restaurant._id);
     setFormData({
       name: restaurant.name,
-      description: restaurant.description,
+      description: restaurant.description || "",
       address: restaurant.location?.address || "",
       city: restaurant.location?.city || "",
       state: restaurant.location?.state || "",
       pincode: restaurant.location?.pincode || "",
+      rating: restaurant.rating || "",
     });
   };
 
@@ -62,8 +60,15 @@ const GetEditDeleteRes = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    const ratingInt = parseInt(formData.rating, 10);
+
+    if (isNaN(ratingInt) || ratingInt < 1 || ratingInt > 5) {
+      alert("Rating must be a whole number between 1 and 5");
+      return;
+    }
+
     try {
-      await axiosInstance.put(`/restaurant/update/${editingId}`, {
+      await axiosInstance.put(`/restaurant/editres/${editingId}`, {
         name: formData.name,
         description: formData.description,
         location: {
@@ -72,6 +77,7 @@ const GetEditDeleteRes = () => {
           state: formData.state,
           pincode: formData.pincode,
         },
+        rating: ratingInt,
       });
       setEditingId(null);
       fetchRestaurants();
@@ -80,12 +86,12 @@ const GetEditDeleteRes = () => {
     }
   };
 
-  if (loading) return <p>Loading restaurants...</p>;
+  if (loading) return <p>Loading your restaurants...</p>;
   if (error) return <p className="text-red-600">{error}</p>;
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      <h2 className="text-3xl font-bold mb-6">My Restaurants</h2>
+      <h2 className="text-3xl font-bold mb-6 text-orange-600">My Restaurants</h2>
       {restaurants.length === 0 ? (
         <p>No restaurants found.</p>
       ) : (
@@ -103,6 +109,7 @@ const GetEditDeleteRes = () => {
                     {restaurant.location?.city}, {restaurant.location?.state} -{" "}
                     {restaurant.location?.pincode}
                   </p>
+                  <p className="text-sm text-gray-500">Rating: {restaurant.rating}</p>
                 </div>
                 <div className="space-x-2">
                   <button
@@ -170,10 +177,18 @@ const GetEditDeleteRes = () => {
                     placeholder="Pincode"
                     required
                   />
-                  <button
-                    className="btn btn-success w-full mt-2"
-                    type="submit"
-                  >
+                  <input
+                    className="input input-bordered w-full"
+                    name="rating"
+                    type="number"
+                    min="1"
+                    max="5"
+                    value={formData.rating}
+                    onChange={handleChange}
+                    placeholder="Rating (1-5)"
+                    required
+                  />
+                  <button className="btn btn-success w-full mt-2" type="submit">
                     Submit Update
                   </button>
                 </form>
