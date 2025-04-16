@@ -1,131 +1,92 @@
+
+
 import React, { useEffect, useState } from "react";
+import moment from "moment";
 import { axiosInstance } from "../../config/axiosInstance.js";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
-const ReviewForm = ({ itemId }) => {
-  const [rating, setRating] = useState(5);
-  const [comment, setComment] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+const Order = () => {
+  const [orders, setOrders] = useState([]);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const fetchOrders = async () => {
     try {
-      await axiosInstance.post("/review/add", { itemId, rating, comment });
-      setSubmitted(true);
-    } catch (error) {
-      console.error("Error submitting review:", error);
+      const token = Cookies.get("token");
+      if (!token) {
+        setError("Authentication token not found.");
+        setLoading(false);
+        return;
+      }
+
+      const response = await axiosInstance.get("/order/get", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setOrders(response.data.data || []);
+    } catch (err) {
+      console.error("Error fetching orders:", err);
+      setError("Failed to load orders.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (submitted) return <p className="text-green-600">Review submitted!</p>;
-
-  return (
-    <form onSubmit={handleSubmit} className="bg-base-200 p-3 mt-2 rounded-lg shadow-sm">
-      <label className="block mb-2 text-sm text-green-600">
-        Rating:
-        <input
-          type="number"
-          min="1"
-          max="5"
-          value={rating}
-          onChange={(e) => setRating(e.target.value)}
-          className="ml-2 input input-bordered input-sm w-12 text-black dark:text-white bg-white dark:bg-gray-800"
-        />
-      </label>
-      <textarea
-        rows="2"
-        className="textarea textarea-bordered input-sm text-sm resize-none text-black dark:text-white bg-white dark:bg-gray-800"
-        placeholder="Write your review..."
-        value={comment}
-        onChange={(e) => setComment(e.target.value)}
-      />
-      <button
-        type="submit"
-        className="btn bg-orange-500 hover:bg-orange-600 text-white btn-sm mt-2"
-      >
-        Submit Review
-      </button>
-    </form>
-  );
-};
-
-const Order = () => {
-  const [cartItems, setCartItems] = useState([]);
-
   useEffect(() => {
-    const fetchCartItems = async () => {
-      try {
-        const token = Cookies.get("token");
-        if (!token) {
-          console.error("No token found, user not authenticated");
-          setCartItems([]);
-          return;
-        }
-
-        const response = await axiosInstance.get("/cart/get", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        console.log("Fetched Cart Items:", response.data);
-        setCartItems(response.data.items || []);
-      } catch (error) {
-        console.error("Error fetching cart items:", error);
-        setCartItems([]); // Fallback to empty array
-      }
-    };
-
-    fetchCartItems();
+    fetchOrders();
   }, []);
 
-  // Calculate total price
-  const totalPrice = cartItems.reduce((sum, item) => {
-    return sum + (item.price * item.quantity);
-  }, 0);
-
   return (
-    <div className="p-6 bg-base-100 min-h-screen">
-      <h2 className="text-2xl font-bold mb-4 text-yellow-500">My Orders</h2>
-      {cartItems.length === 0 ? (
-        <div className="alert alert-info shadow-lg">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            className="stroke-current shrink-0 w-6 h-6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            ></path>
-          </svg>
-          <span className="text-yellow-500">Your cart is empty.</span>
-        </div>
+    <div className="p-4 max-w-5xl mx-auto">
+      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
+        Your Orders
+      </h2>
+
+      {loading ? (
+        <p className="text-center text-gray-500">Loading orders...</p>
+      ) : error ? (
+        <p className="text-red-600 text-center">{error}</p>
+      ) : orders.length === 0 ? (
+        <p className="text-center text-gray-500">You have no orders yet.</p>
       ) : (
-        <div className="card bg-base-200 shadow-xl p-4">
-          <h3 className="text-xl font-semibold mb-2 text-yellow-500">My Order List</h3>
-          <div className="mt-4">
-            <h4 className="font-medium text-yellow-500">My Orders</h4>
-            {cartItems.map((item, i) => (
-              <div key={i} className="mt-2 p-2 bg-base-100 border rounded-lg">
-                <p className="text-yellow-500 font-medium">
-                  Food Name: {item.foodId?.name}
-                </p>
-                <p className="text-yellow-500">
-                  Quantity: {item.quantity} — Price: ₹{item.price} each
-                </p>
-                <p className="text-yellow-500">
-                  Subtotal: ₹{item.price * item.quantity}
-                </p>
-                {item.foodId?._id && <ReviewForm itemId={item.foodId._id} />}
+        <div className="space-y-6">
+          {orders.map((order) => (
+            <div
+              key={order._id}
+              className="border rounded-lg shadow-md p-5 bg-white hover:shadow-lg transition"
+            >
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-3">
+                <h3 className="text-lg font-semibold break-all">
+                  Order ID: {order._id}
+                </h3>
+                <span className="text-sm text-gray-500">
+                  {moment(order.createdAt).format("MMMM Do YYYY, h:mm A")}
+                </span>
               </div>
-            ))}
-            <div className="mt-4 pt-2 border-t border-gray-600">
-              <p className="text-lg font-bold text-yellow-500">
-                Total Price: ₹{totalPrice}
-              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-700 text-sm">
+                <p>
+                  <strong>Status:</strong>{" "}
+                  <span className="capitalize">{order.orderStatus}</span>
+                </p>
+                <p>
+                  <strong>Payment:</strong> {order.paymentStatus}
+                </p>
+              </div>
+
+              <ul className="mt-4 list-disc pl-6 text-gray-800 text-sm">
+                {order.orderItems.map((item, index) => (
+                  <li key={index}>
+                    {item.itemNameId?.name || "Item"} × {item.quantity} — ₹{item.price}
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-4 flex justify-between text-gray-900 font-medium text-sm md:text-base">
+                <span>Discount: ₹{order.discount}</span>
+                <span>Total: ₹{order.totalPrice}</span>
+              </div>
             </div>
-          </div>
+          ))}
         </div>
       )}
     </div>

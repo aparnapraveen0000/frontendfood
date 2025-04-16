@@ -1,30 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { axiosInstance } from "../../config/axiosInstance";
+
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
 
   useEffect(() => {
-    const fetchCartItems = async () => {
-      try {
-        const response = await axiosInstance.get("/cart/get");
-        setCartItems(response.data.items || []);
-        setTotalPrice(response.data.totalPrice || 0);
-      } catch (error) {
-        console.error("Error fetching cart:", error.response?.data || error.message);
-      }
-    };
-
     fetchCartItems();
   }, []);
+console.log("getcart item====",cartItems)
+  const fetchCartItems = async () => {
+    try {
+      const response = await axiosInstance.get("/cart/get");
+      console.log(response,"response=====") 
+      setCartItems(response.data.cart.items || []);
+      setTotalPrice(response.data.cart.totalPrice || 0);
+    } catch (error) {
+      console.error("Error fetching cart:", error.response?.data || error.message);
+    }
+  };
 
   const handleDeleteItem = async (foodId) => {
     try {
       await axiosInstance.put("/cart/remove", { foodId });
-
-      const response = await axiosInstance.get("/cart/get");
-      setCartItems(response.data.items || []);
-      setTotalPrice(response.data.totalPrice || 0);
+      fetchCartItems(); // refresh cart items after delete
     } catch (error) {
       console.error("Error deleting item:", error.response?.data || error.message);
     }
@@ -36,20 +35,26 @@ const Cart = () => {
         <div className="card bg-base-100 shadow-xl">
           <div className="card-body">
             <h2 className="card-title mb-4">Your Cart</h2>
+
             <div className="space-y-4">
               {cartItems.map((item) => (
                 <div
-                  key={item.foodId._id}
+                  key={item.foodId?._id}
                   className="flex items-center justify-between p-4 bg-base-200 rounded-lg"
                 >
                   <div>
+                    <p className="font-semibold">
+                      {item.foodId.itemName || "Item removed"}
+                    </p>
                     <p className="text-sm text-orange-500">
-                      {item.quantity} x ₹{item.price}
+                      {item.quantity} x ₹{item.price} = ₹{item.quantity * item.price}
                     </p>
                   </div>
+
                   <button
                     className="btn btn-error btn-circle btn-sm"
-                    onClick={() => handleDeleteItem(item.foodId._id)}
+                    onClick={() => handleDeleteItem(item.foodId?._id)}
+                    disabled={!item.foodId}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -73,7 +78,7 @@ const Cart = () => {
             <div className="divider"></div>
 
             <div className="flex justify-between items-center">
-              <span className="text-lg font-bold text-yellow-500">Total: ₹{totalPrice}</span>
+              <span className="text-lg font-bold text-yellow-600">Total: ₹{totalPrice}</span>
               <button className="btn btn-primary">Checkout</button>
             </div>
           </div>

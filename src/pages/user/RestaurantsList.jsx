@@ -44,19 +44,19 @@ const RestaurantsList = () => {
 
   const handleAddToCart = async () => {
     try {
-      const response = await axiosInstance.post("/cart/add", {
+      const response = await axiosInstance.post("http://localhost:3000/api/cart/add", {
         foodId: selectedItem._id,
         quantity,
       });
 
-      console.log("Add to Cart Response:", response);
+      console.log("Add to Cart Response:", response.data);
 
       // Update local cart state (optional)
       setCart((prevCart) => {
-        const existingItem = prevCart.find((item) => item._id === selectedItem._id);
+        const existingItem = prevCart.find((item) => item.foodId === selectedItem._id);
         if (existingItem) {
           return prevCart.map((item) =>
-            item._id === selectedItem._id
+            item.foodId === selectedItem._id
               ? { ...item, quantity: item.quantity + quantity }
               : item
           );
@@ -65,8 +65,8 @@ const RestaurantsList = () => {
         }
       });
 
-      setQuantity(1);
-      navigate("/cart");
+      setQuantity(1); // Reset quantity to 1 after adding to cart
+      navigate("/cart"); // Redirect to cart page after successful addition
     } catch (error) {
       console.error("Error adding to cart:", error.response?.data || error.message);
       alert("Failed to add item to cart. Please try again.");
