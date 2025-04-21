@@ -499,3 +499,10 @@
 // };
 
 // export default Order;
+
+
+
+// VITE_API_URL=http://localhost:3000
+// BACKEND_URL=https://foodbackend-nine.vercel.app
+// VITE_STRIPE_PUBLISHABLE_KEY=pk_test_51REYOrQhKFyfepG3DmPygDgOR61iFeNnDUO4o1NIMaM0bjNGDfDowC2S6oudtaNml8Y8DrdMUO0gKEUgxjKL9wv600V3z1rowO
+// http://localhost:3000||
