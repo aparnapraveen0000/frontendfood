@@ -12,7 +12,7 @@ import { ErrorPage } from "../pages/shared/errorpage.jsx";
 import { Menu } from "../pages/user/menu.jsx";
 import RestaurantsList from "../pages/user/RestaurantsList.jsx"
 import SignUpPage from "../pages/user/signupPage.jsx";
-import  UserOrders from "../pages/user/order.jsx";
+import  Order from "../pages/user/order.jsx";
 import AdminDashboard from "../pages/admin/admindashboard.jsx";
 import Adminprofile from "../pages/admin/adminprofile.jsx";
 import AdminSignup from "../pages/admin/adminsignup.jsx";
@@ -86,7 +86,7 @@ import PaymentFailed from "../pages/user/PaymentFailed.jsx";
       },
       {
         path: "/order",
-        element:<UserOrders/>
+        element:<Order/>
       },
      
      ]
