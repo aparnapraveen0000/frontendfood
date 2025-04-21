@@ -1,96 +1,77 @@
-
-
 import React, { useEffect, useState } from "react";
-import moment from "moment";
-import { axiosInstance } from "../../config/axiosInstance.js";
-import Cookies from "js-cookie";
+import { axiosInstance } from "../../config/axiosInstance"; // Path to your axios instance
 
-const Order = () => {
+const OrderPage = () => {
   const [orders, setOrders] = useState([]);
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const fetchOrders = async () => {
-    try {
-      const token = Cookies.get("token");
-      if (!token) {
-        setError("Authentication token not found.");
-        setLoading(false);
-        return;
-      }
-
-      const response = await axiosInstance.get("/order/get", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setOrders(response.data.data || []);
-    } catch (err) {
-      console.error("Error fetching orders:", err);
-      setError("Failed to load orders.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Fetch orders when the page loads
   useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const res = await axiosInstance.get("/order/user/items"); // Ensure this endpoint matches your backend
+        setOrders(res.data || []); // Store orders in state
+        setLoading(false); // Loading finished
+      } catch (err) {
+        setError(err.response?.data?.message || "Failed to fetch orders");
+        setLoading(false); // Loading finished
+      }
+    };
+
     fetchOrders();
   }, []);
 
+  // If loading, display a loading message
+  if (loading) return <p>Loading orders...</p>;
+
+  // If there’s an error, show the error message
+  if (error) return <p className="text-red-500">{error}</p>;
+
   return (
-    <div className="p-4 max-w-5xl mx-auto">
-      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
-        Your Orders
-      </h2>
+    <div className="p-4 max-w-4xl mx-auto">
+      <h2 className="text-2xl font-semibold mb-4">My Orders</h2>
 
-      {loading ? (
-        <p className="text-center text-gray-500">Loading orders...</p>
-      ) : error ? (
-        <p className="text-red-600 text-center">{error}</p>
-      ) : orders.length === 0 ? (
-        <p className="text-center text-gray-500">You have no orders yet.</p>
-      ) : (
-        <div className="space-y-6">
-          {orders.map((order) => (
-            <div
-              key={order._id}
-              className="border rounded-lg shadow-md p-5 bg-white hover:shadow-lg transition"
-            >
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-3">
-                <h3 className="text-lg font-semibold break-all">
-                  Order ID: {order._id}
-                </h3>
-                <span className="text-sm text-gray-500">
-                  {moment(order.createdAt).format("MMMM Do YYYY, h:mm A")}
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-gray-700 text-sm">
-                <p>
-                  <strong>Status:</strong>{" "}
-                  <span className="capitalize">{order.orderStatus}</span>
-                </p>
-                <p>
-                  <strong>Payment:</strong> {order.paymentStatus}
-                </p>
-              </div>
-
-              <ul className="mt-4 list-disc pl-6 text-gray-800 text-sm">
-                {order.orderItems.map((item, index) => (
-                  <li key={index}>
-                    {item.itemNameId?.name || "Item"} × {item.quantity} — ₹{item.price}
-                  </li>
-                ))}
-              </ul>
-
-              <div className="mt-4 flex justify-between text-gray-900 font-medium text-sm md:text-base">
-                <span>Discount: ₹{order.discount}</span>
-                <span>Total: ₹{order.totalPrice}</span>
-              </div>
+      {/* Display each order */}
+      {orders.length > 0 ? (
+        orders.map((order) => (
+          <div key={order._id} className="mb-4 p-4 border border-gray-300 rounded-lg shadow-md">
+            <div>
+              <strong>Order ID:</strong> {order._id}
             </div>
-          ))}
-        </div>
+            <div>
+              <strong>Status:</strong> {order.orderStatus || "Pending"}
+            </div>
+            <div>
+              <strong>Payment Status:</strong> {order.paymentStatus || "Unpaid"}
+            </div>
+            <div>
+              <strong>Total Price:</strong> ₹{order.totalPrice}
+            </div>
+            <div>
+              <strong>Date:</strong> {new Date(order.createdAt).toLocaleString()}
+            </div>
+
+            {/* List all items in the order */}
+            <div className="mt-4">
+              <h3 className="font-bold">Items:</h3>
+              {order.orderItems.map((item, index) => (
+                <div key={index} className="ml-4 mt-2">
+                  <div>
+                    <strong>{item.itemNameId?.name || "Item Name"}</strong>
+                  </div>
+                  <div>Quantity: {item.quantity}</div>
+                  <div>Price: ₹{item.price}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))
+      ) : (
+        <p>No orders found.</p>
       )}
     </div>
   );
 };
 
-export default Order;
+export default OrderPage;

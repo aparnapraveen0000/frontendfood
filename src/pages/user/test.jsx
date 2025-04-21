@@ -1,237 +1,401 @@
-// import React, { useEffect, useState } from 'react';
-// import { axiosInstance } from "../../../config/axiosInstance";
+// // // import React, { useEffect, useState } from 'react';
+// // // import { axiosInstance } from "../../../config/axiosInstance";
 
-// const AllRestaurants = () => {
-//   const [restaurants, setRestaurants] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
+// // // const AllRestaurants = () => {
+// // //   const [restaurants, setRestaurants] = useState([]);
+// // //   const [loading, setLoading] = useState(true);
+// // //   const [error, setError] = useState(null);
 
-//   useEffect(() => {
-//     const fetchRestaurants = async () => {
+// // //   useEffect(() => {
+// // //     const fetchRestaurants = async () => {
+// // //       try {
+// // //         const response = await axiosInstance.get("/restaurant", {
+// // //           withCredentials: true, // Ensures cookies (token) are sent with request
+// // //         });
+// // //         setRestaurants(response.data.data); // Expecting response: { data: [...], message: "..." }
+// // //         setLoading(false);
+// // //       } catch (err) {
+// // //         console.error("Error fetching restaurants:", err);
+// // //         setError("Failed to load restaurants. Please login again.");
+// // //         setLoading(false);
+// // //       }
+// // //     };
+
+// // //     fetchRestaurants();
+// // //   }, []);
+
+// // //   if (loading) return <p>Loading restaurants...</p>;
+// // //   if (error) return <p className="text-red-600">{error}</p>;
+
+// // //   return (
+// // //     <div className="p-4">
+// // //       <h2 className="text-2xl font-bold mb-4">Restaurant List</h2>
+// // //       {restaurants.length === 0 ? (
+// // //         <p>No restaurants found.</p>
+// // //       ) : (
+// // //         <ul className="space-y-3">
+// // //           {restaurants.map((restaurant) => (
+// // //             <li
+// // //               key={restaurant._id}
+// // //               className="p-4 bg-base-200 rounded-lg shadow"
+// // //             >
+// // //               <p className="text-lg font-semibold">{restaurant.name}</p>
+// // //               <p className="text-sm text-gray-600">
+// // //                 {restaurant?.location?.city}, {restaurant?.location?.state}
+// // //               </p>
+// // //             </li>
+// // //           ))}
+// // //         </ul>
+// // //       )}
+// // //     </div>
+// // //   );
+// // // };
+
+// // // export default AllRestaurants;
+// // const fetchCoupon = async () => {
+// //     try {
+// //       const res = await axiosInstance.get(`/coupon/${id}`);
+// //       const coupon = res.data.data;
+// //       const formatDate = (date) => new Date(date).toISOString().split("T")[0];
+// //       setFormData({
+// //         ...coupon,
+// //         validFrom: formatDate(coupon.validFrom),
+// //         validTo: formatDate(coupon.validTo),
+// //       });
+// //     } catch (err) {
+// //      setError("Failed to fetch coupon. Please try again later.");
+// //       console.error("Error fetching coupon:", err);
+// //     } finally {
+// //       setLoading(false);
+// //   import React, { useState } from 'react';
+// //   import CreateRestaurant from './createres.jsx';
+// //   import  EditSellerRestaurant from './geteditdeleteres.jsx';
+  
+// //   function ResManageSeller() {
+// //     const [activeComponent, setActiveComponent] = useState(null);
+  
+// //     const handleAddClick = () => setActiveComponent('add');
+// //     const handleAllClick = () => setActiveComponent('all');
+// //     const handleBack = () => setActiveComponent(null);
+  
+// //     return (
+// //       <>
+// //         {/* Navigation Buttons */}
+// //         {activeComponent === null ? (
+// //           <div className="space-y-4 p-4">
+// //             <div className="navbar bg-orange-300 text-black rounded-lg shadow">
+// //               <button className="btn btn-ghost text-xl" onClick={handleAddClick}>
+// //                 create Restaurant
+// //               </button>
+// //             </div>
+  
+// //             <div className="navbar bg-green-300 text-black rounded-lg shadow">
+// //               <button className="btn btn-ghost text-xl" onClick={handleAllClick}>
+// //                 edit restaurant
+// //               </button>
+// //             </div>
+// //           </div>
+// //         ) : (
+// //           <div className="p-4">
+// //             {/* Back Button */}
+// //             <button
+// //               className="btn btn-secondary mb-4"
+// //               onClick={handleBack}
+// //             >
+// //               Back to Menu
+// //             </button>
+  
+// //             {/* Render Selected Component */}
+// //             {activeComponent === 'add' && <CreateRestaurant />}
+// //             {activeComponent === 'all' && <EditSellerRestaurant />}
+// //           </div>
+// //         )}
+// //       </>
+// //     );
+// //   }
+  
+// //   export default ResManageSeller;
+//   import React, { useEffect, useState } from "react";
+//   import { axiosInstance } from "../../../config/axiosInstance";
+  
+//   const SellerMenuPage = () => {
+//     const [menuItems, setMenuItems] = useState([]);
+//     const [restaurants, setRestaurants] = useState([]);
+//     const [formData, setFormData] = useState({
+//       itemName: "",
+//       description: "",
+//       price: "",
+//       category: "",
+//       itemAvailability: true,
+//       restaurantId: "",
+//       foodImage: null, // Can be a File or URL string
+//     });
+//     const [error, setError] = useState(null); // State for error messages
+//     const [message, setMessage] = useState(""); // State for success/error messages
+  
+//     // Fetch seller's restaurants and their menu
+//     const fetchSellerData = async () => {
 //       try {
-//         const response = await axiosInstance.get("/restaurant", {
-//           withCredentials: true, // Ensures cookies (token) are sent with request
-//         });
-//         setRestaurants(response.data.data); // Expecting response: { data: [...], message: "..." }
-//         setLoading(false);
-//       } catch (err) {
-//         console.error("Error fetching restaurants:", err);
-//         setError("Failed to load restaurants. Please login again.");
-//         setLoading(false);
+//         setError(null);
+//         setMessage("");
+//         const res = await axiosInstance.get("/seller/restaurants");
+//         const restaurants = res.data.data;
+//         const allMenuItems = restaurants.flatMap((r) =>
+//           r.menu.map((item) => ({ ...item, restaurantId: r._id }))
+//         );
+//         setRestaurants(restaurants);
+//         setMenuItems(allMenuItems);
+//       } catch (error) {
+//         console.error("Error fetching seller data:", error);
+//         setError("Failed to load restaurants and menu items. Please try again.");
 //       }
 //     };
-
-//     fetchRestaurants();
-//   }, []);
-
-//   if (loading) return <p>Loading restaurants...</p>;
-//   if (error) return <p className="text-red-600">{error}</p>;
-
-//   return (
-//     <div className="p-4">
-//       <h2 className="text-2xl font-bold mb-4">Restaurant List</h2>
-//       {restaurants.length === 0 ? (
-//         <p>No restaurants found.</p>
-//       ) : (
-//         <ul className="space-y-3">
-//           {restaurants.map((restaurant) => (
-//             <li
-//               key={restaurant._id}
-//               className="p-4 bg-base-200 rounded-lg shadow"
+  
+//     useEffect(() => {
+//       fetchSellerData();
+//     }, []);
+  
+//     // Handle input changes
+//     const handleChange = (e) => {
+//       const { name, value, type, checked, files } = e.target;
+//       if (type === "checkbox") {
+//         setFormData({ ...formData, [name]: checked });
+//       } else if (type === "file") {
+//         setFormData({ ...formData, foodImage: files[0] });
+//       } else {
+//         setFormData({ ...formData, [name]: value });
+//       }
+//     };
+  
+//     // Add a new menu item
+//     const handleAddItem = async (e) => {
+//       e.preventDefault();
+//       setError(null);
+//       setMessage("");
+  
+//       const itemFormData = new FormData();
+//       itemFormData.append("itemName", formData.itemName);
+//       itemFormData.append("description", formData.description);
+//       itemFormData.append("price", parseFloat(formData.price));
+//       itemFormData.append("category", formData.category);
+//       itemFormData.append("itemAvailability", formData.itemAvailability);
+//       itemFormData.append("restaurantId", formData.restaurantId);
+  
+//       // Support file OR URL
+//       if (formData.foodImage instanceof File) {
+//         itemFormData.append("foodImage", formData.foodImage); // Upload file
+//       } else if (typeof formData.foodImage === "string" && formData.foodImage.trim() !== "") {
+//         itemFormData.append("foodImage", formData.foodImage); // Use URL
+//       } else {
+//         setError("Please upload an image or provide an image URL.");
+//         return;
+//       }
+  
+//       try {
+//         const res = await axiosInstance.post("/seller/menu/create", itemFormData, {
+//           headers: { "Content-Type": "multipart/form-data" },
+//         });
+//         setMenuItems([...menuItems, { ...res.data.data, restaurantId: formData.restaurantId }]);
+//         setFormData({
+//           itemName: "",
+//           description: "",
+//           price: "",
+//           category: "",
+//           itemAvailability: true,
+//           restaurantId: "",
+//           foodImage: null,
+//         });
+//         setMessage("✅ Item added successfully!");
+//       } catch (error) {
+//         console.error("Add item failed:", error);
+//         setError("Failed to add menu item. Please check the input and try again.");
+//         setMessage("❌ Failed to add item.");
+//       }
+//     };
+  
+//     // Delete item
+//     const handleDelete = async (id) => {
+//       try {
+//         setError(null);
+//         setMessage("");
+//         await axiosInstance.delete(`/seller/menu/delete/${id}`);
+//         setMenuItems(menuItems.filter((item) => item._id !== id));
+//         setMessage("✅ Item deleted successfully!");
+//       } catch (error) {
+//         console.error("Delete failed:", error);
+//         setError("Failed to delete menu item. Please try again.");
+//         setMessage("❌ Failed to delete item.");
+//       }
+//     };
+  
+//     // Update item
+//     const handleUpdate = async (id, updatedItem) => {
+//       try {
+//         setError(null);
+//         setMessage("");
+//         const res = await axiosInstance.put(`/seller/menu/update/${id}`, {
+//           ...updatedItem,
+//           price: parseFloat(updatedItem.price),
+//           restaurantId: updatedItem.restaurantId,
+//         });
+//         setMenuItems(menuItems.map((item) => (item._id === id ? { ...res.data.data, restaurantId: updatedItem.restaurantId } : item)));
+//         setMessage("✅ Item updated successfully!");
+//       } catch (error) {
+//         console.error("Update failed:", error);
+//         setError("Failed to update menu item. Please try again.");
+//         setMessage("❌ Failed to update item.");
+//       }
+//     };
+  
+//     return (
+//       <div className="p-6 bg-gray-50 min-h-screen">
+//         <h1 className="text-3xl font-bold text-orange-600 mb-6">Manage Menu Items</h1>
+  
+//         {/* Display error or success message */}
+//         {(error || message) && (
+//           <div
+//             className={`mb-4 p-3 rounded ${
+//               message.includes("✅") ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+//             }`}
+//           >
+//             {error || message}
+//           </div>
+//         )}
+  
+//         {/* Add new item */}
+//         <div className="bg-white p-4 rounded-xl shadow mb-8 max-w-xl">
+//           <h2 className="text-xl font-semibold mb-4">Add New Menu Item</h2>
+//           <form onSubmit={handleAddItem} className="space-y-4">
+//             <input
+//               type="text"
+//               name="itemName"
+//               placeholder="Item Name"
+//               value={formData.itemName}
+//               onChange={handleChange}
+//               className="input input-bordered input-sm"
+//               required
+//             />
+//             <textarea
+//               name="description"
+//               placeholder="Description"
+//               value={formData.description}
+//               onChange={handleChange}
+//               className="textarea textarea-bordered input-sm"
+//               required
+//             />
+//             <input
+//               type="number"
+//               name="price"
+//               placeholder="Price"
+//               value={formData.price}
+//               onChange={handleChange}
+//               className="input input-bordered input-sm"
+//               min="1"
+//               required
+//             />
+//             <input
+//               type="text"
+//               name="category"
+//               placeholder="Category"
+//               value={formData.category}
+//               onChange={handleChange}
+//               className="input input-bordered input-sm"
+//               required
+//             />
+//             <select
+//               name="restaurantId"
+//               value={formData.restaurantId}
+//               onChange={handleChange}
+//               className="select select-bordered input-sm"
+//               required
 //             >
-//               <p className="text-lg font-semibold">{restaurant.name}</p>
-//               <p className="text-sm text-gray-600">
-//                 {restaurant?.location?.city}, {restaurant?.location?.state}
+//               <option value="">Select Restaurant</option>
+//               {restaurants.map((r) => (
+//                 <option key={r._id} value={r._id}>
+//                   {r.name}
+//                 </option>
+//               ))}
+//             </select>
+//             <div className="form-control">
+//               <label className="label cursor-pointer">
+//                 <span className="label-text">Available?</span>
+//                 <input
+//                   type="checkbox"
+//                   name="itemAvailability"
+//                   className="toggle"
+//                   checked={formData.itemAvailability}
+//                   onChange={handleChange}
+//                 />
+//               </label>
+//             </div>
+//             <input
+//               type="file"
+//               name="foodImage"
+//               accept="image/*"
+//               onChange={handleChange}
+//               className="file-input file-input-bordered input-sm"
+//             />
+//             <div className="divider text-xs">OR</div>
+//             <input
+//               type="text"
+//               placeholder="Image URL"
+//               value={typeof formData.foodImage === "string" ? formData.foodImage : ""}
+//               onChange={(e) => setFormData({ ...formData, foodImage: e.target.value })}
+//               className="input input-bordered input-sm"
+//             />
+//             <button
+//               type="submit"
+//               className="btn btn-success input-sm"
+//               disabled={!formData.restaurantId || !formData.itemName || !formData.price || !formData.category}
+//             >
+//               Add Item
+//             </button>
+//           </form>
+//         </div>
+  
+//         {/* Menu items list */}
+//         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+//           {menuItems.map((item) => (
+//             <div key={item._id} className="bg-white rounded-xl shadow p-4">
+//               <h3 className="text-xl font-bold">{item.itemName}</h3>
+//               <p className="text-gray-600">{item.description}</p>
+//               <p className="font-semibold text-orange-600 mt-2">₹{item.price}</p>
+//               <p className="text-sm text-gray-500">{item.category}</p>
+//               <p className={`text-sm ${item.itemAvailability ? "text-green-600" : "text-red-500"}`}>
+//                 {item.itemAvailability ? "Available" : "Not Available"}
 //               </p>
-//             </li>
+//               {item.foodImage && (
+//                 <img
+//                   src={item.foodImage}
+//                   alt={item.itemName}
+//                   className="mt-2 w-full h-32 object-cover rounded"
+//                 />
+//               )}
+//               <div className="flex justify-between mt-4">
+//                 <button
+//                   onClick={() => {
+//                     const updatedName = prompt("Update name", item.itemName) || item.itemName;
+//                     handleUpdate(item._id, {
+//                       ...item,
+//                       itemName: updatedName,
+//                     });
+//                   }}
+//                   className="text-blue-600 hover:underline"
+//                 >
+//                   Edit
+//                 </button>
+//                 <button
+//                   onClick={() => handleDelete(item._id)}
+//                   className="text-red-500 hover:underline"
+//                 >
+//                   Delete
+//                 </button>
+//               </div>
+//             </div>
 //           ))}
-//         </ul>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default AllRestaurants;
-import React, { useEffect, useState } from 'react';
-import {axiosInstance} from '../../../config/axiosInstance.js';
-import { toast } from 'react-toastify';
-
-const OrdersPage = () => {
-  const [orders, setOrders] = useState([]);
-  const [selectedOrder, setSelectedOrder] = useState(null);
-  const [updateData, setUpdateData] = useState({ orderStatus: '', paymentStatus: '' });
-
-  // Fetch orders on mount
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
-  const fetchOrders = async () => {
-    try {
-      const res = await axiosInstance.get('/order/admin/get');
-      setOrders(res.data);
-    } catch (error) {
-      console.error("Error fetching admin orders:", error);
-      toast.error("Failed to load orders");
-    }
-  };
-
-  const handleDelete = async (id) => {
-    try {
-      await axiosInstance.delete(`/order/delete/${id}`);
-      toast.success("Order deleted successfully");
-      setOrders(orders.filter(order => order._id !== id));
-    } catch (error) {
-      console.error("Delete error:", error);
-      toast.error("Failed to delete order");
-    }
-  };
-
-  const handleUpdateOrder = async () => {
-    try {
-        const res = await axiosInstance.put(`/order/update/${selectedOrder._id}`, {
-            userId: selectedOrder.userId,
-            orderItems: selectedOrder.orderItems,
-            discount: selectedOrder.discount,
-            paymentStatus: updateData.paymentStatus,
-            orderStatus: updateData.orderStatus
-        });
-
-        if (res.data.data) {
-            // Update state with the newly updated order
-            setOrders(orders.map(order => order._id === selectedOrder._id ? res.data.data : order));
-        }
-
-        toast.success("Order updated successfully");
-        setSelectedOrder(null);  // Close the modal after updating
-    } catch (error) {
-        console.error("Error updating order:", error);
-        toast.error("Failed to update order");
-    }
-};
-
-
-  return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">All Orders</h2>
-      <div className="overflow-x-auto">
-        <table className="table table-zebra w-full">
-          <thead>
-            <tr>
-              <th>User ID</th>
-              <th>Total Price</th>
-              <th>Status</th>
-              <th>Payment</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map(order => (
-              <tr key={order._id}>
-                <td>{order.userId}</td>
-                <td>₹{order.totalPrice}</td>
-                <td>{order.orderStatus}</td>
-                <td>{order.paymentStatus}</td>
-                <td className="flex gap-2">
-                  <button
-                    className="btn btn-sm bg-orange-500 text-white hover:bg-orange-600"
-                    onClick={() => {
-                      setSelectedOrder(order);
-                      setUpdateData({
-                        orderStatus: order.orderStatus,
-                        paymentStatus: order.paymentStatus
-                      });
-                    }}
-                  >
-                    Update
-                  </button>
-                  <button
-                    className="btn btn-sm bg-red-500 text-white hover:bg-red-600"
-                    onClick={() => handleDelete(order._id)}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Update Modal */}
-      {selectedOrder && (
-        <dialog id="update_modal" className="modal modal-open">
-          <div className="modal-box">
-            <h3 className="font-bold text-lg mb-4">Update Order</h3>
-
-            <div className="form-control mb-3">
-              <label className="label">Order Status</label>
-              <select
-                className="select select-bordered"
-                value={updateData.orderStatus}
-                onChange={(e) =>
-                  setUpdateData({ ...updateData, orderStatus: e.target.value })
-                }
-              >
-                <option value="">-- Select --</option>
-                <option value="pending">Pending</option>
-                <option value="confirmed">Confirmed</option>
-                <option value="shipped">Shipped</option>
-                <option value="delivered">Delivered</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
-            </div>
-
-            <div className="form-control mb-3">
-              <label className="label">Payment Status</label>
-              <select
-                className="select select-bordered"
-                value={updateData.paymentStatus}
-                onChange={(e) =>
-                  setUpdateData({ ...updateData, paymentStatus: e.target.value })
-                }
-              >
-                <option value="">-- Select --</option>
-                <option value="pending">Pending</option>
-                <option value="completed">Completed</option>
-                <option value="failed">Failed</option>
-                <option value="refunded">Refunded</option>
-              </select>
-            </div>
-
-            <div className="modal-action">
-              <button
-                className="btn btn-sm bg-orange-500 text-white hover:bg-orange-600"
-                onClick={handleUpdateOrder}
-              >
-                Save
-              </button>
-              <button className="btn btn-sm" onClick={() => setSelectedOrder(null)}>
-                Cancel
-              </button>
-            </div>
-          </div>
-        </dialog>
-      )}
-    </div>
-  );
-};
-
-export default OrdersPage;
-// const fetchCoupon = async () => {
-//   try {
-//     const res = await axiosInstance.get(`/coupon/${id}`);
-//     const coupon = res.data.data;
-//     const formatDate = (date) => new Date(date).toISOString().split("T")[0];
-//     setFormData({
-//       ...coupon,
-//       validFrom: formatDate(coupon.validFrom),
-//       validTo: formatDate(coupon.validTo),
-//     });
-//   } catch (err) {
-//     setError("Failed to fetch coupon. Please try again later.");
-//     console.error("Error fetching coupon:", err);
-//   } finally {
-//     setLoading(false);
-//   }
-// };
+//         </div>
+//       </div>
+//     );
+//   };
+  
+//   export default SellerMenuPage;

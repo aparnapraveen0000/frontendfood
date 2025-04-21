@@ -26,8 +26,8 @@ export const ProtectSellerHead = () => {
         <Link to={"seller/dashboard"} className="hover:text-orange-500 transition duration-300">
           Dashboard
         </Link>
-        <Link to={"seller/profile"} className="hover:text-orange-500 transition duration-300">
-          Adminprofile
+        <Link to={"seller/resseller"} className="hover:text-orange-500 transition duration-300">
+          restaurant management
         </Link>
         <Link to={"seller/login"} className="hover:text-orange-500 transition duration-300">
           login

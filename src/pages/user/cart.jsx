@@ -1,31 +1,93 @@
 import React, { useState, useEffect } from "react";
 import { axiosInstance } from "../../config/axiosInstance";
+import { loadStripe } from "@stripe/stripe-js";
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [coupons, setCoupons] = useState([]);
+  const [discountedTotal, setDiscountedTotal] = useState(0);
+  const [discountMessage, setDiscountMessage] = useState("");
 
   useEffect(() => {
     fetchCartItems();
+    fetchCoupons();
   }, []);
-console.log("getcart item====",cartItems)
+
   const fetchCartItems = async () => {
     try {
       const response = await axiosInstance.get("/cart/get");
-      console.log(response,"response=====") 
       setCartItems(response.data.cart.items || []);
-      setTotalPrice(response.data.cart.totalPrice || 0);
+      const cartTotal = response.data.cart.totalPrice || 0;
+      setTotalPrice(cartTotal);
+      setDiscountedTotal(cartTotal);
     } catch (error) {
       console.error("Error fetching cart:", error.response?.data || error.message);
+    }
+  };
+
+  const fetchCoupons = async () => {
+    try {
+      const response = await axiosInstance.get("/coupon/get_all");
+      setCoupons(response.data.data || []);
+    } catch (error) {
+      console.error("Error fetching coupons:", error.response?.data || error.message);
+    }
+  };
+
+  const handleApplyCoupon = async (selectedCode) => {
+    try {
+      const response = await axiosInstance.post("/coupon/apply", {
+        code: selectedCode,
+        cartTotal: totalPrice,
+      });
+
+      setDiscountedTotal(response.data.discountedTotal);
+      setDiscountMessage(`Applied coupon "${selectedCode}": ${response.data.message}`);
+    } catch (error) {
+      setDiscountMessage(error.response?.data?.message || "Error applying coupon");
     }
   };
 
   const handleDeleteItem = async (foodId) => {
     try {
       await axiosInstance.put("/cart/remove", { foodId });
-      fetchCartItems(); // refresh cart items after delete
+      fetchCartItems();
     } catch (error) {
       console.error("Error deleting item:", error.response?.data || error.message);
+    }
+  };
+
+  const handleCheckout = async () => {
+    try {
+      const stripe = await stripePromise;
+
+      const cartData = {
+        cartItems: cartItems.map(item => ({
+          foodId: item.foodId._id,
+          price: item.price,
+          quantity: item.quantity,
+        })),
+        totalPrice: discountedTotal,
+      };
+
+      const response = await axiosInstance.post("/payment/create-checkout-session", cartData);
+      const { sessionId } = response.data;
+
+      if (sessionId) {
+        const result = await stripe.redirectToCheckout({ sessionId });
+
+        if (result.error) {
+          console.error("Stripe error:", result.error.message);
+        }
+      } else {
+        console.error("No sessionId returned from server");
+      }
+
+    } catch (error) {
+      console.error("Checkout error:", error.response?.data || error.message);
     }
   };
 
@@ -77,9 +139,42 @@ console.log("getcart item====",cartItems)
 
             <div className="divider"></div>
 
+            {/* Coupon Section */}
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold">Available Coupons</h3>
+              <ul className="space-y-2">
+                {coupons.map((coupon) => (
+                  <li key={coupon._id} className="flex items-center justify-between bg-base-200 p-3 rounded-lg">
+                    <div>
+                      <span className="font-bold">{coupon.code}</span> - {coupon.discountValue}% off
+                    </div>
+                    <button
+                      className="btn btn-sm btn-success"
+                      onClick={() => handleApplyCoupon(coupon.code)}
+                    >
+                      Apply
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              {discountMessage && (
+                <p className="text-sm mt-2 text-green-600">{discountMessage}</p>
+              )}
+            </div>
+
+            <div className="divider"></div>
+
+            <div className="flex flex-col gap-1 mb-4">
+              <p className="text-base font-medium text-gray-600">Original Price: ₹{totalPrice}</p>
+              <p className="text-lg font-bold text-yellow-600">
+                Price After Coupon: ₹{discountedTotal}
+              </p>
+            </div>
+
             <div className="flex justify-between items-center">
-              <span className="text-lg font-bold text-yellow-600">Total: ₹{totalPrice}</span>
-              <button className="btn btn-primary">Checkout</button>
+              <button className="btn btn-primary" onClick={handleCheckout}>
+                Checkout
+              </button>
             </div>
           </div>
         </div>

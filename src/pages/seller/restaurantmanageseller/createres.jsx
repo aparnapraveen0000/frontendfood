@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { axiosInstance } from "../../../config/axiosInstance";
+import { toast } from "react-toastify";
 
 const CreateRestaurant = () => {
   const [formData, setFormData] = useState({
@@ -20,9 +21,8 @@ const CreateRestaurant = () => {
     e.preventDefault();
 
     const ratingInt = parseInt(formData.rating, 10);
-
     if (isNaN(ratingInt) || ratingInt < 1 || ratingInt > 5) {
-      alert("Rating must be a whole number between 1 and 5");
+      toast.error("Rating must be a whole number between 1 and 5");
       return;
     }
 
@@ -39,10 +39,9 @@ const CreateRestaurant = () => {
         rating: ratingInt,
       });
 
+      toast.success("Restaurant created successfully!");
       console.log('Restaurant created:', response.data);
-      alert("Restaurant created successfully!");
 
-      // Clear the form after successful creation
       setFormData({
         name: '',
         description: '',
@@ -54,7 +53,7 @@ const CreateRestaurant = () => {
       });
     } catch (error) {
       console.error('Error:', error.response?.data || error.message);
-      alert(error.response?.data?.message || "Something went wrong");
+      toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
 
