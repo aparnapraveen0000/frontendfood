@@ -506,3 +506,11 @@
 // BACKEND_URL=https://foodbackend-nine.vercel.app
 // VITE_STRIPE_PUBLISHABLE_KEY=pk_test_51REYOrQhKFyfepG3DmPygDgOR61iFeNnDUO4o1NIMaM0bjNGDfDowC2S6oudtaNml8Y8DrdMUO0gKEUgxjKL9wv600V3z1rowO
 // http://localhost:3000||
+// n your Stripe Dashboard, create a webhook endpoint pointing to https://your-backend.com/api/payment/webhook.
+// Select the checkout.session.completed event.
+// Copy the webhook secret and add it to your .env file:
+// text
+
+// Copy
+// STRIPE_WEBHOOK_SECRET=your-webhook-secret
+// For local testing, use ngrok to expose your server (ngrok http 5000) and update the webhook URL in Stripe.
