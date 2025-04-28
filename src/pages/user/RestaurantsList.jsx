@@ -44,7 +44,7 @@ const RestaurantsList = () => {
 
   const handleAddToCart = async () => {
     try {
-      const response = await axiosInstance.post("http://localhost:3000/api/cart/add", {
+      const response = await axiosInstance.post("/cart/add", {
         foodId: selectedItem._id,
         quantity,
       });
@@ -112,7 +112,7 @@ const RestaurantsList = () => {
             onClick={handleAddToCart}
             className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
           >
-            Add to Cart
+             Cart
           </button>
         </div>
       ) : (
