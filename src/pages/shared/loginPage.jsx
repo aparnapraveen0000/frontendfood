@@ -29,6 +29,7 @@ export const Login = ({ role }) => {
     const currentRole = userConfig[role] || userConfig.user;
 
     const onSubmit = async (data) => {
+        console.log("working")
         if (!data.email || !data.password) {
             toast.error("All fields are required.");
             return;
