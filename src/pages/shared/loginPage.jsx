@@ -5,7 +5,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { saveUser, clearUser } from "../../redux/userSlice";
-import Cookies from "js-cookie";
 
 export const Login = ({ role }) => {
     const { register, handleSubmit } = useForm(); // Now this will work
@@ -45,7 +44,7 @@ export const Login = ({ role }) => {
 
             if (response?.data) {
                 const { message, token, ...userData } = response.data;
-                Cookies.set("token", token, { expires: 7 });
+                
                 dispatch(saveUser({ user: userData.data, token }));
                 toast.success(message || "Login successful!");
                 if (role === "admin") {

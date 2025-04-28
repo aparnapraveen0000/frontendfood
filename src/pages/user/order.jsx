@@ -4,21 +4,27 @@ import { axiosInstance } from '../../config/axiosInstance.js';
 
 const Order = () => {
     const [orders, setOrders] = useState([]);
+    const [cart, setCart] = useState(null); // State for cart
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchOrders = async () => {
+        const fetchData = async () => {
             try {
-                const response = await axiosInstance.get('/order/user/items');
-                setOrders(response.data);
+                // Fetch orders
+                const orderResponse = await axiosInstance.get('/order/user/items');
+                setOrders(orderResponse.data);
+
+                // Fetch cart
+                const cartResponse = await axiosInstance.get('/cart/items');
+                setCart(cartResponse.data.data);
                 setLoading(false);
             } catch (err) {
-                setError(err.response?.data?.message || 'Failed to load orders');
+                setError(err.response?.data?.message || 'Failed to load data');
                 setLoading(false);
             }
         };
-        fetchOrders();
+        fetchData();
     }, []);
 
     if (loading) {
@@ -39,7 +45,42 @@ const Order = () => {
 
     return (
         <div className="container mx-auto p-4 bg-gray-900 min-h-screen">
-            <h1 className="text-3xl text-yellow-500 font-bold mb-6 text-center">My Orders</h1>
+            <h1 className="text  text-yellow-500 font-bold mb-6 text-center">My Orders</h1>
+
+            {/* Cart Section */}
+            <div className="mb-8">
+                <h2 className="text-2xl text-yellow-500 font-semibold mb-4">Current Cart</h2>
+                {cart && cart.items.length > 0 ? (
+                    <div className="space-y-4">
+                        {cart.items.map(item => (
+                            item.foodId ? (
+                                <div key={item._id} className="flex items-center gap-4 bg-gray-800 p-4 rounded">
+                                    <img
+                                        src={item.foodId.foodImage || '/default-image.jpg'}
+                                        alt={item.foodId.itemName || 'Item'}
+                                        className="w-16 h-16 rounded object-cover"
+                                        onError={(e) => (e.target.src = '/default-image.jpg')}
+                                    />
+                                    <div>
+                                        <p className="text-white">{item.foodId.itemName}</p>
+                                        <p className="text-white">₹{item.price} x {item.quantity}</p>
+                                        <p className="text-gray-400 text-sm">{item.foodId.category}</p>
+                                        <p className="text-gray-400 text-sm">Restaurant ID: {item.foodId.restaurant}</p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <p key={item._id} className="text-yellow-500 text-sm">Item details unavailable</p>
+                            )
+                        ))}
+                        <p className="text-white font-semibold">Total: ₹{cart.totalPrice}</p>
+                        <Link to="/checkout" className="btn btn-warning mt-4 mr-2">Proceed to Checkout</Link>
+                    </div>
+                ) : (
+                    <p className="text-yellow-500">Your cart is empty.</p>
+                )}
+            </div>
+
+            {/* Orders Section */}
             {orders.length === 0 ? (
                 <div className="text-center text-yellow-500 text-xl">
                     No orders found. Start shopping now!
