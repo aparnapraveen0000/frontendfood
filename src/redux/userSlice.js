@@ -13,7 +13,7 @@ const userSlice = createSlice({
         saveUser: (state, action) => {
             state.user = action.payload.user;
             state.isAuthenticated = true;
-            Cookies.set("token", action.payload.token, { expires: 7 }); // Store token in cookies for 7 days
+            
         },
         clearUser: (state) => {
             state.user = null;

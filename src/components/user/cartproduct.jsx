@@ -9,6 +9,9 @@ const Product = ({ product }) => {
   const handleAddToCart = async () => {
     try {
       const token = Cookies.get("token");
+      console.log("=============================================================================")
+      console.log(token)
+      console.log("=============================================================================")
       if (!token) {
         navigate("/login"); // Redirect to login if not authenticated
         return;
