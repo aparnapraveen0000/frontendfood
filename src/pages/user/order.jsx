@@ -49,7 +49,7 @@ const Order = () => {
 
             {/* Cart Section */}
             <div className="mb-8">
-                <h2 className="text-2xl text-yellow-500 font-semibold mb-4">Current Cart</h2>
+                <h2 className="text-2xl text-yellow-500 font-semibold mb-4"></h2>
                 {cart && cart.items.length > 0 ? (
                     <div className="space-y-4">
                         {cart.items.map(item => (
@@ -73,18 +73,18 @@ const Order = () => {
                             )
                         ))}
                         <p className="text-white font-semibold">Total: ₹{cart.totalPrice}</p>
-                        <Link to="/checkout" className="btn btn-warning mt-4 mr-2">Proceed to Checkout</Link>
+                        
                     </div>
                 ) : (
-                    <p className="text-yellow-500">Your cart is empty.</p>
+                    <p className="text-yellow-500"></p>
                 )}
             </div>
 
             {/* Orders Section */}
             {orders.length === 0 ? (
                 <div className="text-center text-yellow-500 text-xl">
-                    No orders found. Start shopping now!
-                    <Link to="/menu" className="btn btn-warning ml-4">Browse Menu</Link>
+                   
+                    <Link to="/menu" className="btn btn-warning ml-4">Discover new food</Link>
                 </div>
             ) : (
                 <div className="space-y-6">

@@ -77,7 +77,7 @@ function UserManagement() {
           </table>
         </div>
       ) : (
-        !loading && <p className="text-center text-gray-500">No users to show.</p>
+        !loading && <p className="text-center text-gray-500">click at the button to get all users</p>
       )}
     </div>
   );

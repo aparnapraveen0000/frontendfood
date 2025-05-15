@@ -6,7 +6,7 @@ import {UserHeader} from '../components/user/UserHeader.jsx';
 
 
 function Rootlayout() {
-  const [isUserAuth,setIsUserAuth]=useState(true)
+  const [isUserAuth,setIsUserAuth]=useState(false)
   return (
     <div>
       

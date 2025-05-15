@@ -31,9 +31,7 @@ export const Header = () => {
         
         <div className='flex items-center gap-4'>
           <DarkMode />
-          <button className='px-4 py-2 bg-orange-500 text-white rounded-lg shadow-md hover:bg-orange-600 transition-all'>
-            search
-          </button>
+          
         </div>
       </div>
     </div>
