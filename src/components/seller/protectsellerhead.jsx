@@ -29,9 +29,7 @@ export const ProtectSellerHead = () => {
         <Link to={"seller/resseller"} className="hover:text-orange-500 transition duration-300">
           restaurant management
         </Link>
-        <Link to={"seller/login"} className="hover:text-orange-500 transition duration-300">
-          login
-        </Link>
+       
       </nav>
 
       {/* Icons & Dark Mode */}

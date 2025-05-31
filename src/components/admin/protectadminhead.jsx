@@ -39,9 +39,7 @@ export const ProtectAdminHead = () => {
         <Link to={"admin/usermanagement"} className="hover:text-orange-500 transition duration-300">
           user
         </Link>
-        <Link to={"admin/login"} className="hover:text-orange-500 transition duration-300">
-          login
-        </Link>
+       
       </nav>
 
       {/* Icons & Dark Mode */}

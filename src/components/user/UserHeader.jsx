@@ -26,9 +26,7 @@ export const UserHeader = () => {
         <Link to={"/about"} className="hover:text-orange-500 transition duration-300">
           About
         </Link>
-        <Link to={"/login"} className="hover:text-orange-500 transition duration-300">
-          Login
-        </Link>
+       
         <Link to={"/order"} className="hover:text-orange-500 transition duration-300">
           My Orders
         </Link>
